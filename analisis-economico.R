@@ -18,4 +18,4 @@ jubilaciones$Fecha <- as.Date(jubilaciones$Fecha)
 
 head(jubilaciones, 10)
 
-tail(jubilaciones)
+tail(jubilaciones,5)
