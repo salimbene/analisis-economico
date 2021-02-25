@@ -16,6 +16,6 @@ colnames(jubilaciones) <- c("Fecha","Pesos")
 jubilaciones$Fecha <- as.Date(jubilaciones$Fecha)
 
 
-head(jubilaciones, 20)
+head(jubilaciones, 10)
 
 tail(jubilaciones)
