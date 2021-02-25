@@ -16,7 +16,6 @@ colnames(jubilaciones) <- c("Fecha","Pesos")
 jubilaciones$Fecha <- as.Date(jubilaciones$Fecha)
 
 
-head(jubilaciones)
+head(jubilaciones, 20)
 
-
-?read.csv
+tail(jubilaciones, 30)
