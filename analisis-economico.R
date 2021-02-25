@@ -39,7 +39,7 @@ salario$Fecha <- as.Date(salario$Fecha)
 
 
 head(salario, 5)
-tail(salario, 50)
+tail(salario, 10)
 
 salario[salario$Fecha == "01-01-95", ]
 jubilaciones[jubilaciones$Fecha == "1995-01-01", ]
