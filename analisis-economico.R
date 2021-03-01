@@ -16,8 +16,8 @@ colnames(jubilaciones) <- c("Fecha","Pesos")
 #converir columna a tipo fecha
 jubilaciones$Fecha <- as.Date(jubilaciones$Fecha)
 
-head(jubilaciones, 5)
-tail(jubilaciones, 5)
+head(jubilaciones)
+tail(jubilaciones)
 
 #pre-work salario minimo desde 1988
 #source datos.gob.ar
@@ -40,30 +40,21 @@ salario$Fecha <- as.Date(salario$Fecha) #format = "%d-%m-%Y"
 ?strptime
 ?as.difftime
 
-tail(jubilaciones)
 head(salario)
-
-jubilaciones[600, 1] == salario[672, 1]
-
-
-salario[salario$Fecha == "01-01-95", 1]
-jubilaciones[jubilaciones$Fecha == "1995-01-01", 1]
-
-nrow(salario[salario$Fecha > "2022-01-01", ])
-head(salario)
-
-salario[salario$Fecha > "2022-01-01", 1] <- salario[salario$Fecha > "2022-01-01", 1] - as.difftime(365, unit="days")
+tail(salario)
 
 
+#pre-work actividad ied
+#source datos.gob.ar
 
-substr(a,1,2)
-
-a <- "123456"
-a(0)
+install.packages("readxl")
+library(readxl)
+?read_xls
+pbi <- read_xls("/home/rstudio/project-objectstorage/pbi_bancomundial.xls", sheet = "ARG", col_names = FALSE)
+pbi <- as.data.frame(pbi)
+colnames(pbi) <- c("Año", "USD")
+head(pbi)
+tail(pbi)
 
 
 
-
-
-
-print("Pude hacer commit - Ori")
