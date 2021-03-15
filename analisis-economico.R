@@ -3,100 +3,73 @@
 # pre-work jubilaciones mínimas desde 1971
 #source datos.gob.ar
 jubilaciones <- read.csv("/home/rstudio/project-objectstorage/jubilacion-minima-desde-1971.csv")
+#install.packages("cartography")
+#install.packages("sf", repos = "https://mac.r-project.org/")
+#install.packages('/Users/matisalimba/Download/sf_0.9-7.tgz',repos = NULL, type = "source")
+#install.packages("devtools")
+#devtools::install_local('/Users/matisalimba/Downloads/sf_0.9-7.tgz')
 
-#ver structura
-str(jubilaciones)
 
-#ver stats
-summary(jubilaciones)
+library(readxl)
+library(scales)
+library(ggplot2)
 
-#renombrar columnas
+setwd('/home/rstudio/project-objectstorage/')
+
+jubilaciones <- read.csv("jubilacion-minima-desde-1971.csv")
+salario <- read.csv("indice-salario-minimo-vital-movil-valores-mensuales-pesos-corrientes-desde-1988.csv", stringsAsFactors = F)
+auh <- read.csv("auh-desde-2009.csv")
+pbi <- read_xls("pbi_bancomundial.xls", sheet = "ARG", col_names = FALSE)
+base <- read_xlsx("base_monetaria_bcra.xlsx")
+inflacion <- read_xlsx("inflacion_variacion_mensual_bcra.xlsx")
+dolar <- read_xlsx("dolar_oficial_bcra.xlsx")
+blue <- read.csv("dolar_paralelo_desde2009.csv")
+
+str(blue)
+?read.csv
+
+base <- as.data.frame(base)
+inflacion <- as.data.frame(inflacion)
+pbi <- as.data.frame(pbi)
+dolar <- as.data.frame(dolar)
+
+colnames(auh) <- c("Fecha","Pesos")
+auh$Fecha <- as.Date(auh$Fecha)
+
+colnames(inflacion) <- c("Fecha","Pesos")
+inflacion$Fecha <- as.Date(inflacion$Fecha)
+
+colnames(base) <- c("Fecha","Pesos")
+base$Fecha <- as.Date(base$Fecha)
+
 colnames(jubilaciones) <- c("Fecha","Pesos")
-
-#converir columna a tipo fecha
 jubilaciones$Fecha <- as.Date(jubilaciones$Fecha)
 
-head(jubilaciones)
-tail(jubilaciones)
+colnames(pbi) <- c("Fecha","Pesos")
+colnames(dolar) <- c("Fecha","Pesos")
+colnames(blue) <- c("Fecha", "Compra", "Venta")
+dolar$Fecha <- as.Date(dolar$Fecha)
+blue$Fecha <- as.Date(blue$Fecha, format = "%m-%d-%Y")
+head(blue)
 
-#pre-work salario minimo desde 1988
-#source datos.gob.ar
-salario <- read.csv("/home/rstudio/project-objectstorage/indice-salario-minimo-vital-movil-valores-mensuales-pesos-corrientes-desde-1988.csv", stringsAsFactors = F)
+head(pbi) #anual desde 1060
+head(salario) #mensual, diario, por hora desde 1965
+head(jubilaciones) #mensual desde 1971
+head(inflacion) #mensual a fin de mes desde 1943
+head(base,10) #dias hábiles desde 1996
+head(auh) #mensual desde 2009
+head(blue) #dolar paralelo desde 2009
+head(dolar) #diario desde 2010 
 
-#ver estructura
-str(salario)
+#mask <- jubilaciones$Fecha >= "2009-11-01"
+#head(jubilaciones[mask,])
 
-#ver stats
-summary(salario)
+str(blue)
 
-#renombrar columnas
-colnames(salario) <- c("Fecha","Mensual","Diario","Hora")
+ggplot() +
+  geom_point(data=dolar, aes(x=Fecha, y=Pesos), colour="green", size=.5) + 
+  geom_line(data=blue, aes(x=Fecha, y=Compra), colour="blue") +
+  coord_cartesian(xlim=c(as.Date("2019-01-01"),as.Date("2021-01-01")))
 
-#converir columna a tipo fecha
-salario$Fecha <- as.Date(salario$Fecha) #format = "%d-%m-%Y"
+summary(blue)
 
-#lala <- salario$Pesos * 21
-?as.Date
-?strptime
-?as.difftime
-
-head(salario)
-tail(salario)
-
-
-#pre-work pbi
-#source bancomundial
-
-install.packages("readxl")
-library(readxl)
-?read_xls
-
-pbi <- read_xls("/home/rstudio/project-objectstorage/pbi_bancomundial.xls", sheet = "ARG", col_names = FALSE)
-pbi <- as.data.frame(pbi)
-colnames(pbi) <- c("Año", "USD")
-head(pbi)
-tail(pbi)
-
-#pre-work base monetaria (dias hábiles)
-#source banco central
-base <- read_xlsx("/home/rstudio/project-objectstorage/base_monetaria_bcra.xlsx")
-base <- as.data.frame(base)
-colnames(base) <- c("Fecha","PesosM")
-tail(base)
-
-#pre-work inflacion mensual (fin de mes)
-#source banco central
-
-inflacion <- read_xlsx("/home/rstudio/project-objectstorage/inflacion_variacion_mensual_bcra.xlsx")
-inflacion <- as.data.frame(inflacion)
-head(inflacion)
-
-
-#pre-work aux
-#source datos.gob.ar
-auh <- read.csv("/home/rstudio/project-objectstorage/auh-desde-2009.csv")
-
-colnames(auh) <- c("Fecha", "Pesos")
-head(auh)
-tail(auh)
-
-tail(base)
-library(ggplot2)
-ggplot(data=base, aes(x=Fecha, y=PesosM)) + geom_line(size=0.1, colour="DarkGreen")
-
-
-tail(salario)
-ggplot(data=salario, aes(x=Fecha, y=Mensual)) + geom_line(size=0.2, colour="DarkBlue")
-
-ggplot(data=salario[salario$Fecha > "2010-01-01",], aes(x=Fecha, y=Mensual)) + geom_line(size=0.2, colour="DarkBlue")
-
-par(mfrow=c(2,2))
-?plot
-plot(salario$Fecha,salario$Mensual)
-plot(base$Fecha,base$PesosM)
-
-tail(salario)
-head(salario)
-head(inflacion)
-
-ggplot(data=inflacion, aes(x=Fecha, y=Mensual)) + geom_line(size=0.2, colour="DarkBlue")
