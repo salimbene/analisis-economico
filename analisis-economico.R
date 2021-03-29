@@ -13,6 +13,7 @@ jubilaciones <- read.csv("/home/rstudio/project-objectstorage/jubilacion-minima-
 library(readxl)
 library(scales)
 library(ggplot2)
+library(shiny)
 
 setwd('/home/rstudio/project-objectstorage/')
 
@@ -53,13 +54,14 @@ blue$Fecha <- as.Date(blue$Fecha, format = "%m-%d-%Y")
 head(blue)
 
 head(pbi) #anual desde 1060
+
 head(salario) #mensual, diario, por hora desde 1965
 head(jubilaciones) #mensual desde 1971
 head(inflacion) #mensual a fin de mes desde 1943
 head(base,10) #dias hábiles desde 1996
 head(auh) #mensual desde 2009
-head(blue) #dolar paralelo desde 2009
-head(dolar) #diario desde 2010 
+head(blue) #dolar paralelo desde 209 diario
+head(dolar) #diario desde 2010 diario
 
 #mask <- jubilaciones$Fecha >= "2009-11-01"
 #head(jubilaciones[mask,])
@@ -69,7 +71,37 @@ str(blue)
 ggplot() +
   geom_point(data=dolar, aes(x=Fecha, y=Pesos), colour="green", size=.5) + 
   geom_line(data=blue, aes(x=Fecha, y=Compra), colour="blue") +
-  coord_cartesian(xlim=c(as.Date("2019-01-01"),as.Date("2021-01-01")))
+  coord_cartesian(xlim=c(as.Date("1990-01-01"),as.Date("2021-01-01")))
 
-summary(blue)
+
+server = function(input, output, session){
+  
+  base1 <- reactive({
+    dolar[dolar$Fecha <= input$sliderBase,]
+  })
+  
+  data2 <- reactive({
+    blue[blue$Fecha <= input$sliderBase,]
+  })
+  
+  output$ggplot <- renderPlot({
+    ggplot() + 
+      geom_point(data=base1(), aes(x=Fecha, y=Pesos), colour="green", size=.5) + 
+      geom_line(data=base2(), aes(x=Fecha, y=Compra), colour="blue") +
+      coord_cartesian(xlim=c(as.Date("1996-02-01"),as.Date("2021-01-28")), ylim=c(0,2683991))
+    
+  })
+  
+}
+ui = basicPage(
+  sliderInput(inputId = "sliderBase",
+              label = "Base monetaria",
+              value = as.Date("2000-02-01"),
+              min = as.Date("1996-02-01"), 
+              max = as.Date("2021-01-28"),
+              timeFormat = "%F"),
+  plotOutput("ggplot")
+  
+)
+shinyApp(ui = ui, server = server)
 
