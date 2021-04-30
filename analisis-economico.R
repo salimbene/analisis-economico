@@ -88,7 +88,7 @@ ggplot() +
   coord_cartesian(xlim=c(as.Date("1990-01-01"),as.Date("2021-01-01")))
 
 dolar1 <= F
-
+?column()
 server = function(input, output, session){
   
   dolarOficial <- reactive({ input$checkDolarOficial })
@@ -137,17 +137,34 @@ server = function(input, output, session){
   })
   
 }
-ui = basicPage(
-  checkboxInput("checkDolarOficial", "Dolar Oficial", TRUE),
-  checkboxInput("checkDolarBlue", "Dolar Blue", TRUE),
-  #verbatimTextOutput("dolar"),
-  sliderInput(inputId = "sliderBase",
-              label = "Brecha Cambiaria",
-              value = as.Date("2015-02-01"),
-              min = as.Date("2010-02-01"), 
-              max = as.Date("2021-01-28"),
-              timeFormat = "%F"),
-  plotOutput("ggplot")
-  
-)
+ui = fluidPage(
+  titlePanel("Variables Macroeconímicas"),
+  fluidRow(
+    column(3, 
+        checkboxInput("checkDolarOficial", "Dolar Oficial", TRUE),
+        checkboxInput("checkDolarBlue", "Dolar Blue", TRUE),
+      ),
+    column(9,
+           fluidRow(
+             column(10, offset = 1,
+                    sliderInput(inputId = "sliderBase",
+                                label = "Brecha Cambiaria",
+                                value = as.Date("2010-02-01"),
+                                min = as.Date("2010-02-01"), 
+                                max = as.Date("2021-01-28"),
+                                timeFormat = "%F",
+                                animate = animationOptions(interval = 200, loop = TRUE),
+                                width='100%')
+                    )
+           ),
+           fluidRow(
+             column(12,
+                    plotOutput("ggplot") )
+           )
+      
+    )
+ 
+
+  ) #end fluidrow
+) #end ui
 shinyApp(ui = ui, server = server)
